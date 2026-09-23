@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugins>
+  <plugin id="dev.hacket.androiddevtools"
+          url="https://github.com/hacket/androiddevtools-plugin-repo/releases/download/v0.27.3.37/androiddevtools-0.27.3.37.zip"
+          version="0.27.3.37">
+    <idea-version since-build="242"/>
+    <name>AndroidDevTools</name>
+    <change-notes><![CDATA[### Added
+- **自定义插件仓库分发（GitHub Pages）**：新增 `publish-repo.sh`——一键发布到 public 分发仓 [androiddevtools-plugin-repo](https://github.com/hacket/androiddevtools-plugin-repo)：本地构建 → zip 挂该仓 Release → 重生成 `updatePlugins.xml` 推 gh-pages → URL 探测校验；带版本防倒退与同版本重发拦截；CHANGELOG 当版段落自动提取为 Release notes 与 change-notes。零 CI 依赖（主仓 Actions billing 拦截不影响此链；Pages 从分支部署不耗 Actions 分钟）。用户在 AS **Manage Plugin Repositories** 加 `https://hacket.github.io/androiddevtools-plugin-repo/updatePlugins.xml` 即可搜索安装并自动更新（CDN 缓存约 10 分钟可见；zip 未签名，安装时警告点继续）。]]></change-notes>
+  </plugin>
+</plugins>
