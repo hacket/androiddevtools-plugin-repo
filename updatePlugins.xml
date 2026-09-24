@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugins>
   <plugin id="dev.hacket.androiddevtools"
-          url="https://github.com/hacket/androiddevtools-plugin-repo/releases/download/v0.27.3.37/androiddevtools-0.27.3.37.zip"
-          version="0.27.3.37">
+          url="https://github.com/hacket/androiddevtools-plugin-repo/releases/download/v0.27.3.43/androiddevtools-0.27.3.43.zip"
+          version="0.27.3.43">
     <idea-version since-build="242"/>
     <name>AndroidDevTools</name>
     <change-notes><![CDATA[### Added
-- **自定义插件仓库分发（GitHub Pages）**：新增 `publish-repo.sh`——一键发布到 public 分发仓 [androiddevtools-plugin-repo](https://github.com/hacket/androiddevtools-plugin-repo)：本地构建 → zip 挂该仓 Release → 重生成 `updatePlugins.xml` 推 gh-pages → URL 探测校验；带版本防倒退与同版本重发拦截；CHANGELOG 当版段落自动提取为 Release notes 与 change-notes。零 CI 依赖（主仓 Actions billing 拦截不影响此链；Pages 从分支部署不耗 Actions 分钟）。用户在 AS **Manage Plugin Repositories** 加 `https://hacket.github.io/androiddevtools-plugin-repo/updatePlugins.xml` 即可搜索安装并自动更新（CDN 缓存约 10 分钟可见；zip 未签名，安装时警告点继续）。]]></change-notes>
+- **Git Repos 行内 blame 提示（光标停留式，默认关）**：编辑器光标停在同一行 0.6s 后，光标处显示该行 git 身份浮层（作者 · 相对时间 · 短 SHA · 提交摘要）。设计为光标停留触发而非常驻行尾 inlay——每次停留恰好一次单行 `git blame -L n,n`，不随滚动/连打重查；引擎走共享 GitRunner（GIT_OPTIONAL_LOCKS=0），与官方 Annotate 并发不抢 index 锁；只对本项目 git 仓内文件生效。设置页开关（默认关，关=零 blame 进程），文案双语。GitRunnerBlameTest：单行 blame 解析/未提交行 null sha/缺文件降级 null/相对时间分桶四测。
+- **Git Repos Maintenance 体检+ 重新下发配置**：右键新增两个入口（选中仓优先，空选=全部）——**体检**：对仓库做只读体检（7 个提速配置键实际值、fsmonitor daemon 运行态、index 版本、commit-graph 存在性、松散对象量），绿黄红三级 Findings 式弹窗展示，全程零写入（真仓测试钉死 config/HEAD 前后零变化）；松散对象超阈值才红（gc 建议）。**重新下发配置**：对已 register 的仓幂等重写当前插件版本的下发集（连跑两次结果一致），插件升级新增配置键后一键补齐；已 unregister 的仓跳过（unregister 即持久退出，复用 maintenance.repo 列表为标记，不新增 state 文件）。MaintenanceDiagnoseReconfigureTest 钉死只读性/幂等/跳过三性。
+- **Toolbox 崩溃守夜（常驻 logcat 监听，默认关）**：设置页开关开启后，为每台在线设备保持常驻 `adb logcat` 监听 FATAL EXCEPTION / ANR 关键字——命中即归档前后 30/60 行现场（防环形缓冲被冲掉）并弹 balloon，点击打开 Findings 弹窗（复用 P1 DiagnosticParser 解析归档文件）。同一崩溃签名（异常类+栈顶帧）每会话只报一次，crash loop 不刷屏；设备断连自动重建一次，连续二次失败停守夜+通知。关闭开关即杀全部监听零残留。CrashWatchdogLogicTest：签名匹配四态+真机夹具（crash loop 全命中/噪音夹具零误报）+去重折叠五测。
+- **Toolbox 设备性能实时曲线**：Device 区新按钮「性能曲线」——弹窗内自绘三线图（CPU % / 内存 PSS MB / 掉帧率 %），dumpsys cpuinfo/meminfo/gfxinfo 每 2s 采样；采样线程→队列→EDT 消费（UI 永不阻塞，背压丢最旧）；暂停冻结画面与数据；导出 CSV 一行一采样（缺口留空不造零）。CPU 解析按 PID/进程名精确匹配防子串串仓；gfxinfo 按窗口语义取累计 janky 比例。PerfSamplerParseTest：三源解析+子串负例+状态机六测。
+- **SSH ControlMaster OpenSSH 灰名单 + 陈旧 socket 预检（29 仓调研行动项5）**：OpenSSH 9.07/9.08 已知多路复用竞态 bug——启动时一次 `ssh -V` 解析版本号（907/908 = 灰名单），命中即降级普通 ssh 不注入（宁可慢不可坏）；批量网络命令前 3s 预算预检 `/tmp/adt-ssh-cm-*` 陈旧 socket（`ssh -O check` 逐个验活，死的删除），防系统重启后残留 socket 令所有 multiplexed 连接静默挂起。SshControlMasterPathTest 增版本解析边界（906/907/908/1002）、灰名单降级、预检不抛三测。]]></change-notes>
   </plugin>
 </plugins>
